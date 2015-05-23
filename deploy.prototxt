@@ -4,6 +4,8 @@ input_dim: 10
 input_dim: 3
 input_dim: 20
 input_dim: 20
+
+
 layers {
   name: "conv1"
   type: CONVOLUTION
@@ -11,10 +13,11 @@ layers {
   top: "conv1"
   convolution_param {
     num_output: 20
-    kernel_size: 10
+    kernel_size: 5
     stride: 1
   }
 }
+
 layers {
   name: "pool1"
   type: POOLING
@@ -26,15 +29,17 @@ layers {
     stride: 2
   }
 }
+
 layers {
   name: "ip1"
   type: INNER_PRODUCT
   bottom: "pool1"
   top: "ip1"
   inner_product_param {
-    num_output: 50
+    num_output: 250
   }
 }
+
 layers {
   name: "relu1"
   type: RELU
@@ -45,14 +50,8 @@ layers {
   name: "ip2"
   type: INNER_PRODUCT
   bottom: "ip1"
-  top: "ip2"
-  inner_product_param {
-    num_output: 256
-  }
-}
-layers {
-  name: "prob"
-  type: SOFTMAX
-  bottom: "ip2"
   top: "prob"
+  inner_product_param {
+    num_output: 1
+  }
 }

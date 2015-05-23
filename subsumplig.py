@@ -39,4 +39,5 @@ for filename in os.listdir(args.input_dir):
                 #cv2.waitKey(-1)
                 target_filename="{}_{}_{}.png".format(filename, original_x, original_y)
                 cv2.imwrite(args.output_dir+"/"+target_filename, subimg)
-                print("{} {}".format(target_filename, img[original_y, original_x]))
+                label = float(img[original_y, original_x])/255
+                print("{} {}".format(target_filename, label))

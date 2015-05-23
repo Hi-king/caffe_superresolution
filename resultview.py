@@ -25,18 +25,32 @@ network = caffe.Classifier(
 #network.set_channel_swap('data', (2,1,0))
 
 
-result = numpy.zeros((100, 130))
-for x in xrange(10):
+result = numpy.zeros((100, 130, 3))
+for x in xrange(130):
     print >> sys.stderr, x
     for y in xrange(100):
         filepath = "imgs/target/{}_{}_{}.png".format(args.image_name, x, y)
-        scores = network.predict([caffe.io.load_image(filepath)])
-        #print scores
+        img = caffe.io.load_image(filepath)
+        #import cv2
+        #cv2.imshow("img", img)
+        #cv2.waitKey(-1)
+        #print img.shape
+        #print img.max()
+        #print img
+        scores = network.predict([img])
+        #print network.blobs
+        #print network.blobs['ip1'].data
+        #print network.blobs['ip1'].data.shape
+        if y==0: print scores * 255
         #print scores.shape
-        #print scores.argmax()
-        result[y, x] = scores.argmax()
-print result
-cv2.imshow("result", result)
-cv2.waitKey(-1)
-cv2.imwrite("result.png", result)
-    
+        power = int(scores[0]*255)
+        result[y, x, 0] = power
+        result[y, x, 1] = power
+        result[y, x, 2] = power
+        #exit(0)
+
+    if x % 10 == 0:
+        #print result
+        #cv2.imshow("result", result)
+        #cv2.waitKey(-1)
+        cv2.imwrite("result/result.png", result)

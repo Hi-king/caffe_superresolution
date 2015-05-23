@@ -1,33 +1,27 @@
 name: "LeNet"
 layers {
-  name: "mnist"
+  name: "img"
   type: DATA
   top: "data"
-  top: "label"
+  top: "null"
   data_param {
-    source: "source/traindb"
+    source: "source/traindb_img"
     backend: LMDB
     batch_size: 32
   }
   transform_param { 
     scale: 0.00390625
   }
-  include: { phase: TRAIN }
 }
 layers {
-  name: "mnist"
+  name: "label"
   type: DATA
-  top: "data"
   top: "label"
   data_param {
-    source: "source/traindb"
+    source: "source/traindb_label"
     backend: LMDB
     batch_size: 32
   }
-  transform_param { 
-    scale: 0.00390625
-  }
-  include: { phase: TEST }
 }
 
 layers {
@@ -39,7 +33,7 @@ layers {
   blobs_lr: 2
   convolution_param {
     num_output: 20
-    kernel_size: 10
+    kernel_size: 5
     stride: 1
     weight_filler {
       type: "xavier"
@@ -49,6 +43,7 @@ layers {
     }
   }
 }
+
 layers {
   name: "pool1"
   type: POOLING
@@ -60,6 +55,8 @@ layers {
     stride: 2
   }
 }
+
+
 layers {
   name: "ip1"
   type: INNER_PRODUCT
@@ -68,7 +65,7 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   inner_product_param {
-    num_output: 50
+    num_output: 250
     weight_filler {
       type: "xavier"
     }
@@ -102,7 +99,7 @@ layers {
 }
 layers {
   name: "accuracy"
-  type: ACCURACY
+  type: EUCLIDEAN_LOSS
   bottom: "ip2"
   bottom: "label"
   top: "accuracy"

@@ -7,10 +7,10 @@ net: "train_test.prototxt"
 test_iter: 10
 
 # Carry out testing every 500 training iterations.
-test_interval: 50
+test_interval: 500
 
 # The base learning rate, momentum and the weight decay of the network.
-base_lr: 0.1
+base_lr: 0.01
 momentum: 0.9
 weight_decay: 0.0005
 
@@ -20,7 +20,7 @@ gamma: 0.0001
 power: 0.75
 
 # Display every 100 iterations
-display: 100
+display: 500
 
 # The maximum number of iterations
 max_iter: 100000
