@@ -10,7 +10,7 @@ test_iter: 10
 test_interval: 50
 
 # The base learning rate, momentum and the weight decay of the network.
-base_lr: 0.01
+base_lr: 0.1
 momentum: 0.9
 weight_decay: 0.0005
 
@@ -23,11 +23,11 @@ power: 0.75
 display: 100
 
 # The maximum number of iterations
-max_iter: 10000
+max_iter: 100000
 
 # snapshot intermediate results
 snapshot: 5000
-snapshot_prefix: "output"
+snapshot_prefix: "output/output"
 
 # solver mode: CPU or GPU
 solver_mode: CPU

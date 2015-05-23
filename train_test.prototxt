@@ -39,7 +39,7 @@ layers {
   blobs_lr: 2
   convolution_param {
     num_output: 20
-    kernel_size: 5
+    kernel_size: 10
     stride: 1
     weight_filler {
       type: "xavier"
@@ -61,44 +61,14 @@ layers {
   }
 }
 layers {
-  name: "conv2"
-  type: CONVOLUTION
-  bottom: "pool1"
-  top: "conv2"
-  blobs_lr: 1
-  blobs_lr: 2
-  convolution_param {
-    num_output: 50
-    kernel_size: 5
-    stride: 1
-    weight_filler {
-      type: "xavier"
-    }
-    bias_filler {
-      type: "constant"
-    }
-  }
-}
-layers {
-  name: "pool2"
-  type: POOLING
-  bottom: "conv2"
-  top: "pool2"
-  pooling_param {
-    pool: MAX
-    kernel_size: 2
-    stride: 2
-  }
-}
-layers {
   name: "ip1"
   type: INNER_PRODUCT
-  bottom: "pool2"
+  bottom: "pool1"
   top: "ip1"
   blobs_lr: 1
   blobs_lr: 2
   inner_product_param {
-    num_output: 500
+    num_output: 50
     weight_filler {
       type: "xavier"
     }
@@ -121,7 +91,7 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   inner_product_param {
-    num_output: 10
+    num_output: 1
     weight_filler {
       type: "xavier"
     }
@@ -140,7 +110,7 @@ layers {
 }
 layers {
   name: "loss"
-  type: SOFTMAX_LOSS
+  type: EUCLIDEAN_LOSS
   bottom: "ip2"
   bottom: "label"
   top: "loss"
