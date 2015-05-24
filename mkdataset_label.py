@@ -10,15 +10,14 @@ parser.add_argument("db")
 parser.add_argument("kvfile")
 args = parser.parse_args()
 
-db = lmdb.open(args.db)
+db = lmdb.open(path=args.db, map_size=1024*1024*1024)
 db.open_db()
 
 with db.begin(write=True) as buf:
     for line in open(args.kvfile):
-        key, value = line.split()
-        value = float(value)
+        key, imgpath, r, g, b = line.split()
+        r, g, b = float(r), float(g), float(b)
         data = caffe.io.caffe_pb2.Datum()
-        data.float_data.extend([value])
-        data.channels, data.height, data.width = 1, 1, 1
-        print data
+        data.float_data.extend([r, g, b])
+        data.channels, data.height, data.width = 3, 1, 1
         buf.put(key, data.SerializeToString())

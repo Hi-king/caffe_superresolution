@@ -30,4 +30,4 @@ snapshot: 5000
 snapshot_prefix: "output/output"
 
 # solver mode: CPU or GPU
-solver_mode: CPU
+solver_mode: GPU

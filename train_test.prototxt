@@ -4,12 +4,9 @@ layers {
   type: DATA
   top: "data"
   data_param {
-    source: "source/traindb_img2"
+    source: "source/traindb_img"
     backend: LMDB
     batch_size: 32
-  }
-  transform_param { 
-    scale: 0.00390625
   }
 }
 layers {
@@ -44,6 +41,13 @@ layers {
 }
 
 layers {
+  name: "relu1"
+  type: RELU
+  bottom: "conv1"
+  top: "conv1"
+}
+
+layers {
   name: "conv2"
   type: CONVOLUTION
   bottom: "conv1"
@@ -62,16 +66,26 @@ layers {
     }
   }
 }
-        
+
+
 layers {
-  name: "ip1"
-  type: INNER_PRODUCT
+  name: "relu2"
+  type: RELU
   bottom: "conv2"
-  top: "ip1"
+  top: "conv2"
+}
+
+layers {
+  name: "conv3"
+  type: CONVOLUTION
+  bottom: "conv2"
+  top: "conv3"
   blobs_lr: 1
   blobs_lr: 2
-  inner_product_param {
-    num_output: 1
+  convolution_param {
+    num_output: 3
+    kernel_size: 3
+    stride: 1
     weight_filler {
       type: "xavier"
     }
@@ -80,10 +94,21 @@ layers {
     }
   }
 }
+
+layers {
+  name: "out"
+  type: INNER_PRODUCT
+  bottom: "conv3"
+  top: "out"
+  inner_product_param {
+    num_output: 3
+  }
+}
+
 layers {
   name: "accuracy"
   type: EUCLIDEAN_LOSS
-  bottom: "ip1"
+  bottom: "out"
   bottom: "label"
   top: "accuracy"
   include: { phase: TEST }
@@ -91,7 +116,7 @@ layers {
 layers {
   name: "loss"
   type: EUCLIDEAN_LOSS
-  bottom: "ip1"
+  bottom: "out"
   bottom: "label"
   top: "loss"
 }

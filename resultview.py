@@ -4,6 +4,7 @@ import argparse
 sys.path.insert(0, "/home/ogaki/Workspace/caffe/python")
 import caffe
 import numpy
+import random
 import os
 import json
 import cv2
@@ -11,7 +12,7 @@ import cv2
 parser = argparse.ArgumentParser()
 parser.add_argument("caffemodel")
 parser.add_argument("image_name")
-parser.add_argument("outdir")
+parser.add_argument("outimgname")
 args = parser.parse_args()
 
 caffe.set_phase_test()
@@ -24,40 +25,44 @@ network = caffe.Classifier(
 #network.set_raw_scale('data', 255)
 #network.set_channel_swap('data', (2,1,0))
 
-
-
 db = {}
-for line in open("train_float.txt"):
-    key, value = line.rstrip().split()
-    db[key] = int(float(value)*256)
+for line in open("train.txt"):
+    key, imgpath, r, g, b = line.rstrip().split()
+    db[key] = map(lambda x: int(float(x)*256), [b, g, r])
+
 
 result = numpy.zeros((100, 130, 3))
-for x in xrange(130):
-    print >> sys.stderr, x
-    for y in xrange(100):
-        filepath = "imgs/target/{}_{}_{}.png".format(args.image_name, x, y)
-        img = caffe.io.load_image(filepath)
-        #import cv2
-        #cv2.imshow("img", img)
-        #cv2.waitKey(-1)
-        #print img.shape
-        #print img.max()
-        #print img
-        scores = network.predict([img])
-        #print network.blobs
-        #print network.blobs['ip1'].data
-        #print network.blobs['ip1'].data.shape
-        if y==0: print scores * 256
-        #print scores.shape
-        if scores[0] != scores[0]: scores[0] = 1 #nan
-        power = int(scores[0]*256)
-        result[y, x, 0] = power
-        result[y, x, 1] = power
-        result[y, x, 2] = power
-        #exit(0)
+xys = [(x, y) for x in xrange(130) for y in xrange(100)]
 
-    if x % 10 == 0:
+imgs = []
+for i,(x,y) in enumerate(xys):
+    filepath = "imgs/target/{}_{}_{}.png".format(args.image_name, x, y)
+    img = caffe.io.load_image(filepath).astype(float)
+
+    #import cv2
+    #cv2.imshow("img", img)
+    #cv2.waitKey(-1)
+    #print img.shape
+    #print img.max()
+    #print img
+    scores = network.predict([img])
+    #print network.blobs
+    #print network.blobs['ip1'].data
+    #print network.blobs['ip1'].data.shape
+    # if y==0: print scores * 256
+    #print scores.shape
+    # if scores[0] != scores[0]: scores[0] = 1 #nan
+
+    r, g, b = map(int, (scores*256).tolist()[0])
+    # b, g, r = db["{}_{}_{}.png".format(args.image_name, x, y)]
+    result[y, x, 0] = r
+    result[y, x, 1] = g
+    result[y, x, 2] = b
+    #exit(0)
+
+    if i % 100 == 0:
+        print i
         #print result
         #cv2.imshow("result", result)
         #cv2.waitKey(-1)
-        cv2.imwrite("result/result.png", result)
+        cv2.imwrite(args.outimgname, result)
