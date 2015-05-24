@@ -25,6 +25,12 @@ network = caffe.Classifier(
 #network.set_channel_swap('data', (2,1,0))
 
 
+
+db = {}
+for line in open("train_float.txt"):
+    key, value = line.rstrip().split()
+    db[key] = int(float(value)*256)
+
 result = numpy.zeros((100, 130, 3))
 for x in xrange(130):
     print >> sys.stderr, x
@@ -41,9 +47,10 @@ for x in xrange(130):
         #print network.blobs
         #print network.blobs['ip1'].data
         #print network.blobs['ip1'].data.shape
-        if y==0: print scores * 255
+        if y==0: print scores * 256
         #print scores.shape
-        power = int(scores[0]*255)
+        if scores[0] != scores[0]: scores[0] = 1 #nan
+        power = int(scores[0]*256)
         result[y, x, 0] = power
         result[y, x, 1] = power
         result[y, x, 2] = power

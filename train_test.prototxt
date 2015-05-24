@@ -3,9 +3,8 @@ layers {
   name: "img"
   type: DATA
   top: "data"
-  top: "null"
   data_param {
-    source: "source/traindb_img"
+    source: "source/traindb_img2"
     backend: LMDB
     batch_size: 32
   }
@@ -32,8 +31,8 @@ layers {
   blobs_lr: 1
   blobs_lr: 2
   convolution_param {
-    num_output: 20
-    kernel_size: 5
+    num_output: 32
+    kernel_size: 3
     stride: 1
     weight_filler {
       type: "xavier"
@@ -45,27 +44,16 @@ layers {
 }
 
 layers {
-  name: "pool1"
-  type: POOLING
+  name: "conv2"
+  type: CONVOLUTION
   bottom: "conv1"
-  top: "pool1"
-  pooling_param {
-    pool: MAX
-    kernel_size: 2
-    stride: 2
-  }
-}
-
-
-layers {
-  name: "ip1"
-  type: INNER_PRODUCT
-  bottom: "pool1"
-  top: "ip1"
+  top: "conv2"
   blobs_lr: 1
   blobs_lr: 2
-  inner_product_param {
-    num_output: 250
+  convolution_param {
+    num_output: 64
+    kernel_size: 3
+    stride: 1
     weight_filler {
       type: "xavier"
     }
@@ -74,17 +62,12 @@ layers {
     }
   }
 }
+        
 layers {
-  name: "relu1"
-  type: RELU
-  bottom: "ip1"
-  top: "ip1"
-}
-layers {
-  name: "ip2"
+  name: "ip1"
   type: INNER_PRODUCT
-  bottom: "ip1"
-  top: "ip2"
+  bottom: "conv2"
+  top: "ip1"
   blobs_lr: 1
   blobs_lr: 2
   inner_product_param {
@@ -100,7 +83,7 @@ layers {
 layers {
   name: "accuracy"
   type: EUCLIDEAN_LOSS
-  bottom: "ip2"
+  bottom: "ip1"
   bottom: "label"
   top: "accuracy"
   include: { phase: TEST }
@@ -108,7 +91,7 @@ layers {
 layers {
   name: "loss"
   type: EUCLIDEAN_LOSS
-  bottom: "ip2"
+  bottom: "ip1"
   bottom: "label"
   top: "loss"
 }

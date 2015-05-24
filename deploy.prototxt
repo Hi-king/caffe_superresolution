@@ -2,9 +2,8 @@ name: "LeNet"
 input: "data"
 input_dim: 10
 input_dim: 3
-input_dim: 20
-input_dim: 20
-
+input_dim: 9
+input_dim: 9
 
 layers {
   name: "conv1"
@@ -12,45 +11,29 @@ layers {
   bottom: "data"
   top: "conv1"
   convolution_param {
-    num_output: 20
-    kernel_size: 5
+    num_output: 32
+    kernel_size: 3
     stride: 1
   }
 }
 
 layers {
-  name: "pool1"
-  type: POOLING
+  name: "conv2"
+  type: CONVOLUTION
   bottom: "conv1"
-  top: "pool1"
-  pooling_param {
-    pool: MAX
-    kernel_size: 2
-    stride: 2
+  top: "conv2"
+  convolution_param {
+    num_output: 64
+    kernel_size: 3
+    stride: 1
   }
 }
 
 layers {
   name: "ip1"
   type: INNER_PRODUCT
-  bottom: "pool1"
+  bottom: "conv2"
   top: "ip1"
-  inner_product_param {
-    num_output: 250
-  }
-}
-
-layers {
-  name: "relu1"
-  type: RELU
-  bottom: "ip1"
-  top: "ip1"
-}
-layers {
-  name: "ip2"
-  type: INNER_PRODUCT
-  bottom: "ip1"
-  top: "prob"
   inner_product_param {
     num_output: 1
   }
